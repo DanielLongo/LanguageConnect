@@ -4,8 +4,11 @@ import os
 import pandas as pd
 from constants import LANGUAGES, LANGUAGES_TO_USE
 import csv
+import time
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/daniellongo/keys/lang-d5630e9c6c37.json"
+
+translate_client = translate.Client()
 
 
 def load_common_words(csv_file):
@@ -32,8 +35,26 @@ def translate_words(words, target_lang):
 
 def main():
     words = load_common_words("./translations/english_common-nouns.csv")
-    already_processed = ["english", "latin"]
+    # already_processed = ["spanish", "latin", "korean", "french", "english", "italian", "portuguese"]
+    already_processed = ["spanish",
+    "latin",
+    "korean",
+    "french",
+    "english",
+    "italian",
+    "portuguese",
+    "arabic",
+    "czech",
+    "dutch",
+    "german",
+    "greek",
+    "hindi",
+    "hungarian",
+    "indonesian",
+    "japanese",]
+    # not_processed = ["italian", "portuguese", ]
     for language_to_use in LANGUAGES_TO_USE:
+    # for language_to_use in not_processed:
         print("NOW TRANSLATING TO:", language_to_use)
         if language_to_use in already_processed:
             print("ALREADY TRANSLATED SKIPPING")
@@ -47,6 +68,7 @@ def main():
 
 
 def translate_word(word, target_lang, input_lang='english'):
+    time.sleep(.3)
     target_lang_code = LANGUAGES[target_lang]
 
     if input_lang is None:
@@ -55,7 +77,6 @@ def translate_word(word, target_lang, input_lang='english'):
     else:
         input_lang_code = LANGUAGES[input_lang]
 
-    translate_client = translate.Client()
     text = word
     if isinstance(text, six.binary_type):
         text = text.decode('utf-8')

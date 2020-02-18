@@ -3,7 +3,20 @@ LANGUAGES = {
     "latin": "la",
     "korean": "ko",
     "french": "fr",
-    "english": "en"
+    "english": "en",
+    "italian": "it",
+    "portuguese": "pt",
+    "arabic": "ar",
+    "czech": "cs",
+    "dutch": "nl",
+    "german": "de",
+    "greek": "el",
+    "hindi": "hi",
+    "hungarian": "hu",
+    "indonesian": "id",
+    "japanese": "ja",
+    # "mandarin": "CN",
+    "norwegian": "nb",
 }
 
 LANGUAGES_TO_USE = [
@@ -11,7 +24,20 @@ LANGUAGES_TO_USE = [
     "latin",
     "korean",
     "french",
-    "english"
+    "english",
+    "italian",
+    "portuguese",
+    "arabic",
+    "czech",
+    "dutch",
+    "german",
+    "greek",
+    "hindi",
+    "hungarian",
+    "indonesian",
+    "japanese",
+    # "mandarin",
+    "norwegian",
 ]
 
 # for language to codes https://cloud.google.com/translate/docs/languages

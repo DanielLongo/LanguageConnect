@@ -4,13 +4,36 @@ from constants import LANGUAGES, LANGUAGES_TO_USE
 from translate import load_common_words
 import time
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/daniellongo/keys/lang-d5630e9c6c37.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/DanielLongo/keys/lang-d5630e9c6c37.json"
 
 CLIENT = texttospeech.TextToSpeechClient()
 
 
 def main():
-    already_processed = ["french", "english"]  # ["spanish", "latin", "korean"]
+    already_processed = ["latin", "spanish",
+    "korean",
+    "french",
+    "english",
+    "italian",
+    "portuguese",]
+    already_processed = [
+    "spanish",
+    "latin",
+    "korean",
+    "french",
+    "english",
+    "italian",
+    "portuguese",
+    "arabic",
+    "czech",
+    "dutch",
+    "german",
+    "greek",
+    "hindi",
+    "hungarian",
+    "indonesian",
+    "japanese",]
+    # already_processed = ["spanish", "latin", "korean", "french", "english", "italian", "portuguese"]
     for language in LANGUAGES_TO_USE:
         if language in already_processed:
             print("ALREADY READ SKIPPING", language)
@@ -26,9 +49,11 @@ def read_words(words, language, save_filename_prefix=None):
         save_filename_prefix = "./audio/" + language + "/"
     else:
         save_filename_prefix = "./audio/" + language + "/" + save_filename_prefix + "-"
+    counter = 0
     for word in words:
-        cur_filename = save_filename_prefix + word + ".mp3"
+        cur_filename = save_filename_prefix + str(counter) + "-" + word + ".mp3"
         read_word(word, language, cur_filename)
+        counter += 1
 
 
 def read_word(word, language, save_filename):
@@ -39,10 +64,8 @@ def read_word(word, language, save_filename):
     Note: ssml must be well-formed according to:
         https://www.w3.org/TR/speech-synthesis/
     """
-
-    # Instantiates a client
     print("word", word)
-    time.sleep(1)
+    time.sleep(.2)
 
     language = LANGUAGES[language]
     # Set the text input to be synthesized
@@ -52,7 +75,9 @@ def read_word(word, language, save_filename):
     # voice gender ("neutral")
     voice = texttospeech.types.VoiceSelectionParams(
         language_code=language,
-        ssml_gender=texttospeech.enums.SsmlVoiceGender.NEUTRAL)
+        ssml_gender=texttospeech.enums.SsmlVoiceGender.FEMALE
+    # ssml_gender = texttospeech.enums.SsmlVoiceGender.NEUTRAl
+    )
 
     # Select the type of audio file you want returned
     audio_config = texttospeech.types.AudioConfig(
@@ -61,6 +86,7 @@ def read_word(word, language, save_filename):
     # Perform the text-to-speech request on the text input with the selected
     # voice parameters and audio file type
     response = CLIENT.synthesize_speech(synthesis_input, voice, audio_config)
+    # print(response)
 
     # The response's audio_content is binary.
     with open(save_filename, 'wb') as out:
