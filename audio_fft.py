@@ -245,14 +245,14 @@ def main():
             "japanese",
             "norwegian",
     ]
-    compare_languages(languages_to_use, save_filename="./results/test2a.csv")
+    # compare_languages(languages_to_use, save_filename="./results/test2a.csv")
     # find_diff_among_languages("person", languages_to_use=languages_to_use)
 
     # filenames = ["./audio/spanish/515-papá.mp3", "./audio/spanish/516-proporción.mp3",
     #              "./audio/spanish/319-parlamento.mp3", "./audio/spanish/740-fase.mp3"]
     filenames = ["./audio/english/446-relation.mp3", "./audio/english/539-organization.mp3",
                  "./audio/english/6-man.mp3", "./audio/english/26-business.mp3", "./audio/english/603-commitment.mp3",
-                 "./audio/english/790-interpretation.mp3"]
+                 "./audio/english/790-interpretation.mp3", "./audio/english/4-government.mp3"]
 
     # filenames = get_filenames_from_dir("./audio/english/") + get_filenames_from_dir(
     #     "./audio/spanish/") + get_filenames_from_dir("./audio/french/")
@@ -266,11 +266,8 @@ def main():
     # compare_word_with_others(filenames[-1], filenames)
     # f, Pxx_den = generate_periodogram(filenames[0])
     # regularize_signal_domain(f, Pxx_den)
-
-    # compare_two_words(filenames[0], filenames[0])
-    # compare_two_words(filenames[0], filenames[1])
-    # compare_two_words(filenames[0], filenames[2])
-    # compare_two_words(filenames[0], filenames[3])
+    for file in filenames:
+        compare_two_words(filenames[3], file)
     # subplot_count = 1
     # for filename in filenames:
     #     # generate_graph(filename, subplot_count=subplot_count)
