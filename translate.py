@@ -35,26 +35,26 @@ def translate_words(words, target_lang):
 
 def main():
     words = load_common_words("./translations/english_common-nouns.csv")
-    # already_processed = ["spanish", "latin", "korean", "french", "english", "italian", "portuguese"]
-    already_processed = ["spanish",
-    "latin",
-    "korean",
-    "french",
-    "english",
-    "italian",
-    "portuguese",
-    "arabic",
-    "czech",
-    "dutch",
-    "german",
-    "greek",
-    "hindi",
-    "hungarian",
-    "indonesian",
-    "japanese",]
-    # not_processed = ["italian", "portuguese", ]
-    for language_to_use in LANGUAGES_TO_USE:
-    # for language_to_use in not_processed:
+    already_processed = ["spanish", "latin", "korean", "french", "english", "italian", "portuguese"]
+    # already_processed = ["spanish",
+    # "latin",
+    # "korean",
+    # "french",
+    # "english",
+    # "italian",
+    # "portuguese",
+    # "arabic",
+    # "czech",
+    # "dutch",
+    # "german",
+    # "greek",
+    # "hindi",
+    # "hungarian",
+    # "indonesian",
+    # "japanese",]
+    not_processed = ["italian", "portuguese", ]
+    # for language_to_use in LANGUAGES_TO_USE:
+    for language_to_use in not_processed:
         print("NOW TRANSLATING TO:", language_to_use)
         if language_to_use in already_processed:
             print("ALREADY TRANSLATED SKIPPING")

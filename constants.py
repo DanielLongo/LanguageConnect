@@ -15,13 +15,13 @@ LANGUAGES = {
     "hungarian": "hu",
     "indonesian": "id",
     "japanese": "ja",
-    # "mandarin": "CN",
+    "mandarin": "CN",
     "norwegian": "nb",
 }
 
 LANGUAGES_TO_USE = [
     "spanish",
-    "latin",
+    # "latin",
     "korean",
     "french",
     "english",

@@ -3,12 +3,14 @@ import numpy as np
 # from scipy.io import wavfile
 from audio2numpy import open_audio
 import scipy
+from constants import LANGUAGES_TO_USE
 from scipy import signal
 import matplotlib.pyplot as plt
 import os
 from utils import get_english_word_filenames
 from translate import load_common_words
 import csv
+import statistics
 
 
 def read(filename, normalized=False):
@@ -203,18 +205,34 @@ def find_diff_among_languages(english_word, languages_to_use=None):
 
     # print(differences, len(differences))
     avg_difference = sum(differences) / len(differences)
-    print("Difference", english_word, ":", avg_difference)
-    return avg_difference
+    standard_dev = statistics.stdev(differences)
+    print("average difference:", avg_difference, "standard dev:", standard_dev, "---", english_word)
+    # print("Difference", english_word, ":", avg_difference)
+    # print()
+    return avg_difference, standard_dev
+
+
+def sort_stats(x):
+    return x[1]  # cur diff
 
 
 def compare_languages(languages_to_use, save_filename):
     words = load_common_words("./translations/english_common-nouns.csv")
     differences = {}
-    for english_word in words:
-        cur_diff = find_diff_among_languages(english_word, languages_to_use=languages_to_use)
+    stats = []
+    num_words = len(words)
+    for i, english_word in enumerate(words):
+        cur_diff, cur_sd = find_diff_among_languages(english_word, languages_to_use=languages_to_use)
+        if i % 10 == 0:
+            print("Progress",str(int((i/num_words)*100)) + "%")
         if cur_diff is not None:
             differences[english_word] = cur_diff
+            stats.append([english_word, cur_diff, cur_sd])
 
+    # stats = sorted([(k, v) for k, v in stats.items()], key=sort_stats)
+    stats = sorted(stats, key=sort_stats)
+    stats = [["word", "diff", "sd"]] + stats
+    print("stats", stats)
     differences = {k: v for k, v in sorted(differences.items(), key=lambda item: item[1])}
     differences = [(k, v) for k, v in differences.items()]
 
@@ -223,29 +241,31 @@ def compare_languages(languages_to_use, save_filename):
 
     with open(save_filename, "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerows(differences)
+        writer.writerows(stats)
 
 
 def main():
     languages_to_use = [
-            "spanish",
-            "korean",
-            "french",
-            "english",
-            "italian",
-            "portuguese",
-            "arabic",
-            "czech",
-            "dutch",
-            "german",
-            "greek",
-            "hindi",
-            "hungarian",
-            "indonesian",
-            "japanese",
-            "norwegian",
+        "spanish",
+        "korean",
+        "french",
+        "english",
+        "italian",
+        "portuguese",
+        "arabic",
+        "czech",
+        "dutch",
+        "german",
+        "greek",
+        "hindi",
+        "hungarian",
+        "indonesian",
+        "japanese",
+        "norwegian",
     ]
-    # compare_languages(languages_to_use, save_filename="./results/test2a.csv")
+
+    languages_to_use = LANGUAGES_TO_USE
+    compare_languages(languages_to_use, save_filename="./results/test4sa.csv")
     # find_diff_among_languages("person", languages_to_use=languages_to_use)
 
     # filenames = ["./audio/spanish/515-papá.mp3", "./audio/spanish/516-proporción.mp3",
