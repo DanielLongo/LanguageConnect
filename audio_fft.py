@@ -114,7 +114,7 @@ def compare_two_words(filename_a, filename_b):
     # print("Diff between Pxx " + word_a + " and " + word_b + ":", get_l2(Pxx_den_a, Pxx_den_b))
 
 
-def regularize_signal_domain(f, Pxx_den, max_freq=.4, interval=.001):
+def regularize_signal_domain(f, Pxx_den, max_freq=.4, interval=.01):
     num_intervals = max_freq / interval
     assert ((int(num_intervals) - num_intervals) == 0)
     num_intervals = int(num_intervals)
@@ -191,7 +191,7 @@ def find_diff_among_languages(english_word, languages_to_use=None):
         filenames_dict = get_english_word_filenames(english_word, print_alerts=False, languages_to_use=languages_to_use)
     if filenames_dict == 404:
         print("WORD NOT FOUND")
-        return None
+        return None, None
 
     filenames = list(filenames_dict.values())
     # print(filenames[0])
@@ -265,7 +265,7 @@ def main():
     ]
 
     languages_to_use = LANGUAGES_TO_USE
-    compare_languages(languages_to_use, save_filename="./results/test4sa.csv")
+    compare_languages(languages_to_use, save_filename="./results/test5sa.csv")
     # find_diff_among_languages("person", languages_to_use=languages_to_use)
 
     # filenames = ["./audio/spanish/515-papá.mp3", "./audio/spanish/516-proporción.mp3",
@@ -287,7 +287,7 @@ def main():
     # f, Pxx_den = generate_periodogram(filenames[0])
     # regularize_signal_domain(f, Pxx_den)
     for file in filenames:
-        compare_two_words(filenames[3], file)
+        compare_two_words(filenames[0], file)
     # subplot_count = 1
     # for filename in filenames:
     #     # generate_graph(filename, subplot_count=subplot_count)
