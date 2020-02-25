@@ -7,6 +7,8 @@ from constants import LANGUAGES_TO_USE
 from scipy import signal
 import matplotlib.pyplot as plt
 import os
+
+from meaning_similarity import get_meaning_diff
 from utils import get_english_word_filenames
 from translate import load_common_words
 import csv
@@ -146,6 +148,17 @@ def regularize_signal_domain(f, Pxx_den, max_freq=.4, interval=.01):
     return averaged_out
 
 
+def get_sound_diff(filename_a, filename_b):
+    f_a, Pxx_den_a = generate_periodogram(filename_a)
+    a = regularize_signal_domain(f_a, Pxx_den_a)
+
+    f_b, Pxx_den_b = generate_periodogram(filename_b)
+    b = regularize_signal_domain(f_b, Pxx_den_b)
+
+    diff = get_l2(a, b)
+    return diff
+
+
 def compare_word_with_others(word_filename, other_filenames, sort=True, print_results=False):
     differences = {}
 
@@ -212,6 +225,62 @@ def find_diff_among_languages(english_word, languages_to_use=None):
     return avg_difference, standard_dev
 
 
+def find_intralanguage_connections(language, save_filename_body):
+    words = load_common_words("./translations/" + language + "_common-nouns.csv")
+    # Gets the corresponding file for each word
+    filenames = []
+    for word in words:
+        filename_dict = get_english_word_filenames(word, languages_to_use=["english"], print_alerts=False)
+        if filename_dict == 404:
+            print("UNABLE TO FIND", word)
+            continue
+        filenames.append(list(filename_dict.values())[0])
+
+    # filenames = [list(get_english_word_filenames(word, languages_to_use=["english"], print_alerts=False).values())[0]
+    #              for word in words]
+    # filenames = list(filenames_dict.values())
+    # print(filenames)
+    stats = []
+    for i in range(len(words)):
+        for j in range(i + 1, len(words)):
+            cur_word, cur_word_filename = words[i], filenames[i]
+            cur_compare, cur_compare_filename = words[j], filenames[j]
+            cur_meaning_diff = get_meaning_diff(cur_word, cur_compare)
+            if cur_meaning_diff == 404:
+                continue
+            cur_sound_diff = get_sound_diff(cur_word_filename, cur_compare_filename)
+            cur_stat = (cur_word, cur_compare, cur_sound_diff, cur_meaning_diff)
+            # print("cur stat", cur_stat)
+            stats.append(cur_stat)
+
+    print("unsorted", stats)
+
+    stats_sort_by_sound = sorted(stats, key=sort_stats_index_2)
+    stats_sort_by_sound = [["word_a", "word_b", "meaning_diff", "sound_diff"]] + stats_sort_by_sound
+    with open(save_filename_body + "_sound.csv", "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerows(stats_sort_by_sound)
+
+    stats_sort_by_meaning = sorted(stats, key=sort_stats_index_3)
+    stats_sort_by_meaning = [["word", "word_b", "meaning_diff", "sound_diff"]] + stats_sort_by_meaning
+    with open(save_filename_body + "_meaning.csv", "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerows(stats_sort_by_meaning)
+
+    stats = np.asarray(stats)[:, 2:].astype(np.float)  # 2 remove words so can take avg
+    averages = np.mean(stats, axis=0)
+    print("average meaning diff", averages[0])
+    print("average sound diff", averages[1])
+
+
+def sort_stats_index_2(x):
+    return x[2]
+
+
+def sort_stats_index_3(x):
+    return x[3]
+
+
 def sort_stats(x):
     return x[1]  # cur diff
 
@@ -224,7 +293,7 @@ def compare_languages(languages_to_use, save_filename):
     for i, english_word in enumerate(words):
         cur_diff, cur_sd = find_diff_among_languages(english_word, languages_to_use=languages_to_use)
         if i % 10 == 0:
-            print("Progress",str(int((i/num_words)*100)) + "%")
+            print("Progress", str(int((i / num_words) * 100)) + "%")
         if cur_diff is not None:
             differences[english_word] = cur_diff
             stats.append([english_word, cur_diff, cur_sd])
@@ -265,7 +334,10 @@ def main():
     ]
 
     languages_to_use = LANGUAGES_TO_USE
-    compare_languages(languages_to_use, save_filename="./results/test5sa.csv")
+    # compare_languages(languages_to_use, save_filename="./results/test5sa.csv")
+
+    find_intralanguage_connections("english", "./results/test-intra-1a.csv")
+
     # find_diff_among_languages("person", languages_to_use=languages_to_use)
 
     # filenames = ["./audio/spanish/515-papá.mp3", "./audio/spanish/516-proporción.mp3",
@@ -286,8 +358,8 @@ def main():
     # compare_word_with_others(filenames[-1], filenames)
     # f, Pxx_den = generate_periodogram(filenames[0])
     # regularize_signal_domain(f, Pxx_den)
-    for file in filenames:
-        compare_two_words(filenames[0], file)
+    # for file in filenames:
+    #     compare_two_words(filenames[0], file)
     # subplot_count = 1
     # for filename in filenames:
     #     # generate_graph(filename, subplot_count=subplot_count)
